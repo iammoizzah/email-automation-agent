@@ -9,34 +9,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum CampaignStatus {
-  draft
-  active
-  paused
-  completed
-}
-
-enum SendStatus {
-  scheduled
-  sent
-  failed
-  skipped
-}
-
-enum ReplyClassification {
-  interested
-  not_interested
-  out_of_office
-  unsubscribe
-  neutral
-}
-
 model Campaign {
   id          String         @id @default(cuid())
   name        String
   goal        String         // what the campaign is trying to achieve
   tone        String         // e.g. "formal", "friendly", "direct"
-  status      CampaignStatus @default(draft)
+  status      String   @default("draft") // "draft" | "active" | "paused" | "completed"
   baseSubject String?
   baseBody    String?        // the Composer agent's output — template with {{placeholders}}
   createdAt   DateTime       @default(now())
@@ -76,7 +54,7 @@ model EmailStep {
   subject       String
   body          String      // personalized final draft, ready to send
   sendAt        DateTime
-  status        SendStatus  @default(scheduled)
+  status        String  @default("scheduled")
 
   gmailThreadId String?     // set after first send, used to track replies + thread follow-ups
   gmailMessageId String?
@@ -95,7 +73,7 @@ model SendLog {
   emailStepId String
   emailStep   EmailStep   @relation(fields: [emailStepId], references: [id], onDelete: Cascade)
 
-  status      SendStatus
+  status      String // "scheduled" | "sent" | "failed" | "skipped"
   message     String?     // success confirmation or error detail
   createdAt   DateTime    @default(now())
 }
@@ -107,7 +85,7 @@ model Reply {
 
   fromEmail         String
   snippet           String
-  classification     ReplyClassification?
+  classification    String?   // "interested" | "not_interested" | "out_of_office" | "unsubscribe" | "neutral"
   receivedAt        DateTime
   createdAt         DateTime              @default(now())
 }
