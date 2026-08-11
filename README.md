@@ -1,8 +1,8 @@
-# 📧 AI Email Automation Agent
+#  AI Email Automation Agent
 
 Generate, personalize, sequence, and send email campaigns — with AI agents handling drafting, per-contact personalization, and reply classification.
 
-🚧 In active development.
+ In active development.
 
 ## Getting started
 
