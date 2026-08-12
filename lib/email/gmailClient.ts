@@ -102,3 +102,63 @@ export async function getGmailClientFor(email: string) {
 
   return google.gmail({ auth: oauth2Client, version: "v1" });
 }
+
+interface ParsedMessage {
+  id: string;
+  from: string;
+  date: Date;
+  snippet: string;
+  body: string;
+}
+
+function decodeBase64Url(data: string): string {
+  return Buffer.from(data.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf-8");
+}
+
+function extractBody(payload: any): string {
+  if (!payload) return "";
+  if (payload.body?.data) {
+    return decodeBase64Url(payload.body.data);
+  }
+  if (payload.parts) {
+    const textPart = payload.parts.find((p: any) => p.mimeType === "text/plain");
+    if (textPart?.body?.data) return decodeBase64Url(textPart.body.data);
+    for (const part of payload.parts) {
+      const nested = extractBody(part);
+      if (nested) return nested;
+    }
+  }
+  return "";
+}
+
+/**
+ * Fetches every message in a Gmail thread, parsed into a simple shape
+ * (sender, date, snippet, plain-text body) for the reply pipeline to consume.
+ */
+export async function listThreadMessages(
+  fromEmail: string,
+  threadId: string
+): Promise<ParsedMessage[]> {
+  const gmail = await getGmailClientFor(fromEmail);
+  const thread = await gmail.users.threads.get({
+    userId: "me",
+    id: threadId,
+    format: "full",
+  });
+
+  const messages = thread.data.messages || [];
+
+  return messages.map((message) => {
+    const headers = message.payload?.headers || [];
+    const fromHeader = headers.find((h) => h.name === "From")?.value || "";
+    const dateHeader = headers.find((h) => h.name === "Date")?.value || "";
+
+    return {
+      id: message.id || "",
+      from: fromHeader,
+      date: dateHeader ? new Date(dateHeader) : new Date(),
+      snippet: message.snippet || "",
+      body: extractBody(message.payload) || message.snippet || "",
+    };
+  });
+}
