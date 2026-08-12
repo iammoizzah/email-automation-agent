@@ -9,12 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0",
     "@prisma/client": "^5.18.0",
+    "clsx": "^2.1.1",
     "googleapis": "^174.0.1",
+    "lucide-react": "^1.31.0",
     "next": "16.3.0",
     "prisma": "^5.18.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
