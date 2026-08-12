@@ -5,8 +5,10 @@ import type { ContactInput } from "@/types/email";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   let body: any;
   try {
     body = await req.json();
@@ -30,7 +32,7 @@ export async function POST(
     try {
       await prisma.contact.create({
         data: {
-          campaignId: params.id,
+          campaignId: id,
           email: c.email.trim(),
           firstName: c.firstName?.trim() || null,
           lastName: c.lastName?.trim() || null,
@@ -39,7 +41,6 @@ export async function POST(
       });
       created.push(c.email);
     } catch {
-      // Likely a duplicate (campaignId + email unique constraint) — skip, don't fail the batch
       skipped.push(c.email);
     }
   }

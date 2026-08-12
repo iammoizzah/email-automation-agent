@@ -4,10 +4,12 @@ import { prisma } from "@/lib/db/prisma";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       contacts: true,
       emailSteps: { orderBy: { createdAt: "asc" } },
@@ -23,8 +25,10 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   let body: any;
   try {
     body = await req.json();
@@ -38,7 +42,7 @@ export async function PATCH(
   }
 
   const campaign = await prisma.campaign.update({
-    where: { id: params.id },
+    where: { id },
     data: { status: body.status },
   });
 

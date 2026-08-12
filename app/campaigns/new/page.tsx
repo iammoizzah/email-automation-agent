@@ -76,24 +76,24 @@ export default function NewCampaignPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-10 text-slate-100">
+    <main className="min-h-screen bg-white px-6 py-10 text-slate-900">
       <div className="mx-auto max-w-2xl space-y-6">
-        <h1 className="text-2xl font-bold">New Campaign</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">New Campaign</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <Card className="space-y-4 p-5">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-300">Campaign name</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Campaign name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Q3 Product Launch Outreach"
-                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-300">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
                 Goal — what is this email trying to achieve?
               </label>
               <textarea
@@ -101,16 +101,16 @@ export default function NewCampaignPage() {
                 onChange={(e) => setGoal(e.target.value)}
                 rows={3}
                 placeholder="Introduce our new analytics feature to existing customers and invite them to a demo call"
-                className="w-full resize-none rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-300">Tone</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Tone</label>
               <select
                 value={tone}
                 onChange={(e) => setTone(e.target.value)}
-                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               >
                 <option value="friendly">Friendly</option>
                 <option value="formal">Formal</option>
@@ -121,7 +121,7 @@ export default function NewCampaignPage() {
           </Card>
 
           <Card className="space-y-2 p-5">
-            <label className="block text-sm font-medium text-slate-300">
+            <label className="block text-sm font-medium text-slate-700">
               Contacts — one per line: email, first name, last name, company
             </label>
             <textarea
@@ -129,18 +129,18 @@ export default function NewCampaignPage() {
               onChange={(e) => setContactsRaw(e.target.value)}
               rows={6}
               placeholder={"jane@acme.com, Jane, Doe, Acme Inc\njohn@beta.com, John, Smith, Beta Co"}
-              className="w-full resize-none rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs outline-none focus:border-indigo-500"
+              className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 outline-none placeholder:text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-600">
               Only email is required — leave the rest blank if unknown.
             </p>
           </Card>
 
           {error && (
-            <p className="text-sm text-rose-400">{error}</p>
+            <p className="text-sm text-rose-600">{error}</p>
           )}
           {status && (
-            <p className="text-sm text-slate-400">{status}</p>
+            <p className="text-sm text-slate-700">{status}</p>
           )}
 
           <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
