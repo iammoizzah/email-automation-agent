@@ -1,4 +1,5 @@
 // lib/prompts/sequencerPrompt.ts
+import type { ContactInput } from "@/types/email";
 
 export function buildSequencerSystemPrompt(): string {
   return (
@@ -9,6 +10,7 @@ export function buildSequencerSystemPrompt(): string {
     "in those cases shouldSendFollowUp must be false. " +
     "If there was no reply at all, a single polite follow-up after a reasonable gap (3-5 days) is appropriate. " +
     "Never suggest more than one follow-up after a 'not_interested' or negative signal. " +
+    "Personalize the follow-up using the recipient details provided, the same way the original email was personalized. " +
     "Respond with ONLY a single valid JSON object matching this exact shape, no markdown fences, no commentary:\n" +
     `{"shouldSendFollowUp":boolean,"subject":string|null,"body":string|null,"daysUntilSend":number|null,"reasoning":string}`
   );
@@ -20,8 +22,16 @@ export function buildSequencerUserPrompt(params: {
   stepNumber: number;
   replyClassification: string | null;
   replySnippet: string | null;
+  contact: ContactInput;
 }): string {
-  const { originalSubject, originalBody, stepNumber, replyClassification, replySnippet } = params;
+  const {
+    originalSubject,
+    originalBody,
+    stepNumber,
+    replyClassification,
+    replySnippet,
+    contact,
+  } = params;
 
   const replyBlock = replyClassification
     ? `\n\nTHEY REPLIED. Classification: ${replyClassification}\nReply snippet: "${replySnippet}"`
@@ -29,6 +39,7 @@ export function buildSequencerUserPrompt(params: {
 
   return (
     `THIS IS FOLLOW-UP DECISION FOR STEP ${stepNumber + 1} (previous step was ${stepNumber})\n` +
+    `RECIPIENT: ${JSON.stringify(contact)}\n` +
     `ORIGINAL SUBJECT: ${originalSubject}\n` +
     `ORIGINAL BODY:\n${originalBody}` +
     replyBlock +
