@@ -1,38 +1,40 @@
-// components/campaign/SendNowButton.tsx
+// components/campaign/PollRepliesButton.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
-export function SendNowButton({ campaignId }: { campaignId: string }) {
+export function PollRepliesButton() {
   const router = useRouter();
-  const [isSending, setIsSending] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
   async function handleClick() {
-    setIsSending(true);
+    setIsPolling(true);
     setResult(null);
     try {
-      const res = await fetch(`/api/campaigns/${campaignId}/send-now`, { method: "POST" });
+      const res = await fetch("/api/gmail/poll-replies-manual", { method: "POST" });
       const data = await res.json();
       if (!res.ok) {
-        setResult(data.error || "Send failed.");
+        setResult(data.error || "Poll failed.");
       } else {
-        setResult(`Sent ${data.sent}, skipped ${data.skipped}, failed ${data.failed}.`);
+        setResult(
+          `Checked ${data.threadsChecked}, ${data.newReplies} new replies, ${data.followUpsScheduled} follow-ups scheduled.`
+        );
         router.refresh();
       }
     } catch {
       setResult("Network error.");
     } finally {
-      setIsSending(false);
+      setIsPolling(false);
     }
   }
 
   return (
     <div className="flex items-center gap-3">
-      <Button onClick={handleClick} disabled={isSending} size="sm">
-        {isSending ? "Sending..." : "Send Due Emails Now"}
+      <Button onClick={handleClick} disabled={isPolling} variant="secondary" size="sm">
+        {isPolling ? "Checking..." : "Check for Replies"}
       </Button>
       {result && <span className="text-xs text-slate-700">{result}</span>}
     </div>
